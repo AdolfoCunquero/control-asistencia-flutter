@@ -1,0 +1,30 @@
+{
+  "nombreApp" : "Componentes",
+  "rutas" : [
+    {
+      "ruta" : "course",
+      "icon" : "course",
+      "texto": "Cursos"
+    },
+    {
+      "ruta" : "section",
+      "icon" : "section",
+      "texto": "Secciones"
+    },
+    {
+      "ruta" : "user",
+      "icon" : "user",
+      "texto": "Usuarios"
+    },
+    {
+      "ruta" : "asignation",
+      "icon" : "asignation",
+      "texto": "Asignacion Cursos"
+    },
+    {
+      "ruta" : "login",
+      "icon" : "user",
+      "texto": "Login"
+    }
+  ]
+}
