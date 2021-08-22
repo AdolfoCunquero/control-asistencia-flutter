@@ -7,14 +7,19 @@
       "texto": "Cursos"
     },
     {
+      "ruta" : "user",
+      "icon" : "user",
+      "texto": "Estudiantes"
+    },
+    {
+      "ruta" : "professor",
+      "icon" : "professor",
+      "texto": "Catedraticos"
+    },
+    {
       "ruta" : "section",
       "icon" : "section",
       "texto": "Secciones"
-    },
-    {
-      "ruta" : "user",
-      "icon" : "user",
-      "texto": "Usuarios"
     },
     {
       "ruta" : "asignation",

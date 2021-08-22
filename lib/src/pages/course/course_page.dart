@@ -1,5 +1,6 @@
 import 'package:control_asistencia/src/models/course_model.dart';
 import 'package:control_asistencia/src/pages/course/course_add_page.dart';
+import 'package:control_asistencia/src/providers/current_user.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -23,7 +24,15 @@ class _CoursePageState extends State<CoursePage> {
   }
 
   Future<List<Course>> getCourses() async {
-    final response = await http.get(Uri.parse('${URL_BASE.Env.url_base}course/'));
+
+    var currentUserProvider = await userProvider.cargarData();
+    final String accessToken = currentUserProvider["access_token"];
+
+    final response = await http.get(Uri.parse('${URL_BASE.Env.url_base}course/'),
+        headers: {
+          "Authorization": accessToken
+        }
+        );
     if (response.statusCode == 200) {
       final items = json.decode(response.body).cast<Map<String, dynamic>>();
       List<Course> courses = items.map<Course>((json) {
@@ -31,6 +40,7 @@ class _CoursePageState extends State<CoursePage> {
       }).toList();
       return courses;
     } else {
+      print("error");
       throw Exception('Failed to load Courses');
     }
   }
@@ -52,7 +62,7 @@ class _CoursePageState extends State<CoursePage> {
               var data = snapshot.data[index];
               return Card(
                 child: ListTile(
-                  leading: Icon(Icons.person),
+                  //leading: Icon(Icons.person),
                   trailing: Icon(Icons.view_list),
                   title: Text(
                     data.course_name,

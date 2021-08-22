@@ -4,6 +4,7 @@ final _icons = <String, IconData>{
   'course': Icons.featured_play_list_rounded,
   'section': Icons.widgets,
   'user': Icons.account_circle,
+  'professor': Icons.verified_user,
   'asignation': Icons.article_sharp
 };
 

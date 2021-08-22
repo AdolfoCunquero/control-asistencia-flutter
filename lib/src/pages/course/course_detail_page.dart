@@ -1,3 +1,4 @@
+import 'package:control_asistencia/src/providers/current_user.dart';
 import 'package:flutter/material.dart';
 import 'package:control_asistencia/src/pages/course/course_edit_page.dart';
 import 'package:control_asistencia/src/env/env.dart' as URL_BASE;
@@ -13,8 +14,14 @@ class CourseDetailPage extends StatefulWidget {
 
 class _CourseDetailPageState extends State<CourseDetailPage> {
 
-  void deleteStudent(context) async {
-    await http.delete(Uri.parse("${URL_BASE.Env.url_base}course/${widget.course.course_code}/"));
+  void deleteCourse(context) async {
+    var currentUserProvider = await userProvider.cargarData();
+    final String accessToken = currentUserProvider["access_token"];
+
+    await http.delete(Uri.parse("${URL_BASE.Env.url_base}course/${widget.course.course_code}/"),
+        headers: {
+          "Authorization": accessToken
+        });
     // Navigator.pop(context);
     Navigator.of(context).pushNamedAndRemoveUntil('/', (Route<dynamic> route) => false);
   }
@@ -36,7 +43,7 @@ class _CourseDetailPageState extends State<CourseDetailPage> {
             ),
             ElevatedButton(
               child: Text("Aceptar"),
-              onPressed: () => deleteStudent(context),
+              onPressed: () => deleteCourse(context),
               style: ButtonStyle(
                 backgroundColor: MaterialStateProperty.all<Color>(Colors.white),
                 foregroundColor: MaterialStateProperty.all<Color>(Colors.blue),
