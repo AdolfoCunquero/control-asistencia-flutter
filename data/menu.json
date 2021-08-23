@@ -1,13 +1,13 @@
 {
   "nombreApp" : "Componentes",
-  "rutas" : [
+  "rutas_admin" : [
     {
       "ruta" : "course",
       "icon" : "course",
       "texto": "Cursos"
     },
     {
-      "ruta" : "user",
+      "ruta" : "student",
       "icon" : "user",
       "texto": "Estudiantes"
     },
@@ -30,6 +30,13 @@
       "ruta" : "login",
       "icon" : "user",
       "texto": "Login"
+    }
+  ],
+  "rutas_student" : [
+    {
+      "ruta" : "course",
+      "icon" : "course",
+      "texto": "Cursos"
     }
   ]
 }

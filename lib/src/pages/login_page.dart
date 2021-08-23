@@ -1,9 +1,12 @@
+import 'dart:io';
 import 'package:control_asistencia/src/models/access_model.dart';
+import 'package:control_asistencia/src/models/user_model.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 import 'package:control_asistencia/src/env/env.dart' as URL_BASE;
-//import 'package:flutter_session/flutter_session.dart';
 import 'dart:convert';
+import 'package:path_provider/path_provider.dart';
 
 class LoginPage extends StatefulWidget {
   @override
@@ -15,6 +18,29 @@ class _LoginDemoState extends State<LoginPage> {
   String _username = "";
   String _password = "";
 
+  void obtenerDatos() async {
+    final file = await _localFile;
+    String content = await file.readAsString();
+    print(content);
+  }
+
+  Future<String> get _localPath async {
+    final directory = await getApplicationDocumentsDirectory();
+
+    return directory.path;
+  }
+
+  Future<File> get _localFile async {
+    final path = await _localPath;
+    return File('$path/current_user.json');
+  }
+
+  Future<File> writeCurrentUser(String user) async {
+    final file = await _localFile;
+
+    return file.writeAsString(user);
+  }
+
   Future _validateLogin() async {
     var response =  await http.post(Uri.parse("${URL_BASE.Env.url_base}auth/login/"),
       body: {
@@ -22,10 +48,29 @@ class _LoginDemoState extends State<LoginPage> {
         "password": _password,
       },
     );
+
     if (response.statusCode == 200){
-      //AccessModel login = AccessModel.fromJson(jsonDecode(response.body));
-      //await FlutterSession().set("login", login);
+      AccessModel login = AccessModel.fromJson(jsonDecode(response.body));
+
+      var me =  await http.get(Uri.parse("${URL_BASE.Env.url_base}auth/me/"),
+        headers: {
+         "Authorization" : "Bearer ${login.access}"
+        }
+      );
+      UserModel user_model = UserModel.fromJson(jsonDecode(me.body));
+      writeCurrentUser("""
+        {
+          "username": "${user_model.username}",
+          "rol": ${user_model.rol},
+          "first_name": "${user_model.first_name}",
+          "last_name": "${user_model.last_name}",
+          "access_token": "Bearer ${login.access}"
+         }
+      """);
     }
+
+    print('Loged in!');
+
     return response;
   }
 

@@ -1,26 +1,26 @@
-import 'package:control_asistencia/src/pages/students/student_edit_page.dart';
+import 'package:control_asistencia/src/models/professor_model.dart';
+import 'package:control_asistencia/src/pages/professor/professor_edit_page.dart';
 import 'package:control_asistencia/src/providers/current_user.dart';
 import 'package:flutter/material.dart';
 import 'package:control_asistencia/src/env/env.dart' as URL_BASE;
-import 'package:control_asistencia/src/models/student_model.dart';
 import 'package:http/http.dart' as http;
 
-class StudentDetailPage extends StatefulWidget {
+class ProfessorDetailPage extends StatefulWidget {
 
-  final Student student;
-  StudentDetailPage({required this.student});
+  final Professor professor;
+  ProfessorDetailPage({required this.professor});
 
   @override
-  _StudentDetailPageState createState() => _StudentDetailPageState();
+  _ProfessorDetailPageState createState() => _ProfessorDetailPageState();
 }
 
-class _StudentDetailPageState extends State<StudentDetailPage> {
+class _ProfessorDetailPageState extends State<ProfessorDetailPage> {
 
-  void deleteStudent(context) async {
+  void deleteProfessor(context) async {
     var currentUserProvider = await userProvider.cargarData();
     final String accessToken = currentUserProvider["access_token"];
 
-    await http.delete(Uri.parse("${URL_BASE.Env.url_base}auth/update/${widget.student.id}/"),
+    await http.delete(Uri.parse("${URL_BASE.Env.url_base}auth/update/${widget.professor.id}/"),
         headers: {
           "Authorization": accessToken
         });
@@ -33,7 +33,7 @@ class _StudentDetailPageState extends State<StudentDetailPage> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          content: Text('Esta seguro de eliminar este estudiante'),
+          content: Text('Esta seguro de eliminar este catedratico'),
           actions: <Widget>[
             ElevatedButton(
               child: Text("Cancelar"),
@@ -45,7 +45,7 @@ class _StudentDetailPageState extends State<StudentDetailPage> {
             ),
             ElevatedButton(
               child: Text("Aceptar"),
-              onPressed: () => deleteStudent(context),
+              onPressed: () => deleteProfessor(context),
               style: ButtonStyle(
                 backgroundColor: MaterialStateProperty.all<Color>(Colors.white),
                 foregroundColor: MaterialStateProperty.all<Color>(Colors.blue),
@@ -61,7 +61,7 @@ class _StudentDetailPageState extends State<StudentDetailPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Detalle de Estudiante'),
+        title: Text('Detalle de Catedratico'),
         actions: <Widget>[
           IconButton(
             icon: Icon(Icons.delete),
@@ -76,15 +76,7 @@ class _StudentDetailPageState extends State<StudentDetailPage> {
               children: <Widget>[
                 ListTile(
                   title: Text(
-                    widget.student.carnet,
-                    style: TextStyle(fontSize: 20),
-                  ),
-                  subtitle: Text("Carnet"),
-                ),
-                Divider(),
-                ListTile(
-                  title: Text(
-                    widget.student.username,
+                    widget.professor.username,
                     style: TextStyle(fontSize: 20),
                   ),
                   subtitle: Text("Username"),
@@ -92,7 +84,7 @@ class _StudentDetailPageState extends State<StudentDetailPage> {
                 Divider(),
                 ListTile(
                   title: Text(
-                    widget.student.email,
+                    widget.professor.email,
                     style: TextStyle(fontSize: 20),
                   ),
                   subtitle: Text("Email"),
@@ -100,7 +92,7 @@ class _StudentDetailPageState extends State<StudentDetailPage> {
                 Divider(),
                 ListTile(
                   title: Text(
-                    widget.student.first_name,
+                    widget.professor.first_name,
                     style: TextStyle(fontSize: 20),
                   ),
                   subtitle: Text("Nombres"),
@@ -108,7 +100,7 @@ class _StudentDetailPageState extends State<StudentDetailPage> {
                 Divider(),
                 ListTile(
                   title: Text(
-                    widget.student.last_name,
+                    widget.professor.last_name,
                     style: TextStyle(fontSize: 20),
                   ),
                   subtitle: Text("Apellidos"),
@@ -120,10 +112,11 @@ class _StudentDetailPageState extends State<StudentDetailPage> {
         child: Icon(Icons.edit),
         onPressed: () => Navigator.of(context).push(
           MaterialPageRoute(
-            builder: (BuildContext context) => StudentEditPage(student: widget.student),
+            builder: (BuildContext context) => ProfessorEditPage(professor: widget.professor),
           ),
         ),
       ),
     );
   }
+
 }

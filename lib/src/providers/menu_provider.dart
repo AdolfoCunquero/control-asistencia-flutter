@@ -6,15 +6,24 @@ class _MenuProvider {
 
   _MenuProvider(){}
 
-  Future<List<dynamic>> cargarData() async {
+  Future<List<dynamic>> cargarData(int rol) async {
     final resp = await rootBundle.loadString('data/menu.json');
     Map dataMap = json.decode(resp);
-    opciones = dataMap["rutas"];
+
+    opciones = dataMap["rutas_admin"];
+
+    /*if (rol ==1){
+      opciones = dataMap["rutas_admin"];
+    }else if(rol == 2){
+      opciones = dataMap["rutas_student"];
+    }else if(rol == 3){
+      opciones = dataMap["rutas_student"];
+    }
+    */
+
 
     return opciones;
   }
-
-
 
 }
 
