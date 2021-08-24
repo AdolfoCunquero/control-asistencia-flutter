@@ -1,4 +1,10 @@
+import 'package:control_asistencia/src/models/course_model.dart';
+import 'package:control_asistencia/src/models/professor_model.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'package:control_asistencia/src/env/env.dart' as URL_BASE;
+import 'package:control_asistencia/src/providers/current_user.dart';
+import 'dart:convert';
 
 class SectionForm extends StatefulWidget {
 
@@ -31,6 +37,73 @@ class SectionForm extends StatefulWidget {
 }
 
 class _SectionFormState extends State<SectionForm> {
+
+  var professors;
+  var courses;
+  int? username_professor;
+  String? course_code;
+
+  Future<List<Professor>> getProfessors() async {
+    var currentUserProvider = await userProvider.cargarData();
+    final String accessToken = currentUserProvider["access_token"];
+
+    final response = await http.get(Uri.parse('${URL_BASE.Env.url_base}users/?rol__id=2'),
+        headers: {
+          "Authorization": accessToken
+        });
+    if (response.statusCode == 200) {
+      final items = json.decode(response.body).cast<Map<String, dynamic>>();
+      List<Professor> professorsResponse = items.map<Professor>((json) {
+        return Professor.fromJson(json);
+      }).toList();
+      setState(() {
+        professors = professorsResponse;
+      });
+      print("Catedaticos cargados");
+      return professorsResponse;
+
+    } else {
+      throw Exception('Failed to load Courses');
+    }
+  }
+
+  Future<List<Course>> getCourses() async {
+    var currentUserProvider = await userProvider.cargarData();
+    final String accessToken = currentUserProvider["access_token"];
+
+    final response = await http.get(Uri.parse('${URL_BASE.Env.url_base}course/'),
+        headers: {
+          "Authorization": accessToken
+        });
+    if (response.statusCode == 200) {
+      final items = json.decode(response.body).cast<Map<String, dynamic>>();
+      List<Course> courseResponse = items.map<Course>((json) {
+        return Course.fromJson(json);
+      }).toList();
+      setState(() {
+        courses = courseResponse;
+      });
+      print("Cursos cargados");
+      return courseResponse;
+    } else {
+      throw Exception('Failed to load Courses');
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.newRow){
+      username_professor = null;
+      course_code = null;
+    }else{
+      username_professor = int.parse(widget.username_professor.text);
+      course_code = widget.course_code.text;
+    }
+
+  }
+
+
   @override
   Widget build(BuildContext context) {
     return Form(
@@ -66,16 +139,33 @@ class _SectionFormState extends State<SectionForm> {
           Container(
             padding: EdgeInsets.all(10.0),
           ),
-          TextFormField(
-            textCapitalization: TextCapitalization.words,
-            controller: widget.course_code,
-            keyboardType: TextInputType.text,
-            decoration: InputDecoration(labelText: 'Codigo Curso'),
-            validator: (String? value){
-              if (value == null || value.isEmpty){
-                return "El codigo de curso es requerido";
+          FutureBuilder(
+              future: getCourses(),
+              initialData: [],
+              builder:(BuildContext context, AsyncSnapshot snapshot){
+                if(!snapshot.hasData){
+                  return Center(
+                    child: CircularProgressIndicator(),
+                  );
+                }
+                return Container(
+                  child: DropdownButton(
+                    items: snapshot.data.map<DropdownMenuItem<String>>((item){
+                      return new DropdownMenuItem<String>(
+                        child: Text("${item.course_code} ${item.course_name}"),
+                        value: item.course_code,
+                      );
+                    }).toList(),
+                    onChanged: (value){
+                      setState(() {
+                        course_code = value.toString();
+                        widget.course_code.text = course_code.toString();
+                      });
+                    },
+                    value: course_code,
+                  ),
+                );
               }
-            },
           ),
           Container(
             padding: EdgeInsets.all(10.0),
@@ -108,16 +198,33 @@ class _SectionFormState extends State<SectionForm> {
           Container(
             padding: EdgeInsets.all(10.0),
           ),
-          TextFormField(
-            textCapitalization: TextCapitalization.words,
-            controller: widget.username_professor,
-            keyboardType: TextInputType.text,
-            decoration: InputDecoration(labelText: "Catedratico"),
-            validator: (String? value){
-              if (value == null || value.isEmpty){
-                return "El catedratico es requerido";
+          FutureBuilder(
+            future: getProfessors(),
+            initialData: [],
+            builder:(BuildContext context, AsyncSnapshot snapshot){
+              if(!snapshot.hasData){
+                return Center(
+                  child: CircularProgressIndicator(),
+                );
               }
-            },
+              return Container(
+                child: DropdownButton(
+                    items: snapshot.data.map<DropdownMenuItem<int>>((item){
+                      return new DropdownMenuItem<int>(
+                        child: Text("${item.first_name} ${item.last_name}"),
+                        value: item.id,
+                      );
+                    }).toList(),
+                  onChanged: (value){
+                    setState(() {
+                      username_professor = int.parse(value.toString());
+                      widget.username_professor.text = username_professor.toString();
+                    });
+                  },
+                  value: username_professor,
+                ),
+              );
+            }
           ),
           Container(
             padding: EdgeInsets.all(10.0),

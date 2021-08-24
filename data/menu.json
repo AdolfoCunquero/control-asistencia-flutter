@@ -30,6 +30,11 @@
       "ruta" : "login",
       "icon" : "user",
       "texto": "Login"
+    },
+    {
+      "ruta" : "asistencia",
+      "icon" : "asistencia",
+      "texto": "Asistencia"
     }
   ],
   "rutas_student" : [
