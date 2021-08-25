@@ -1,5 +1,6 @@
 import 'package:control_asistencia/src/pages/asistencia/asistencia_page.dart';
 import 'package:control_asistencia/src/pages/professor/professor_page.dart';
+import 'package:control_asistencia/src/pages/statistics/statistics_page.dart';
 import 'package:flutter/material.dart';
 import 'package:control_asistencia/src/pages/login_page.dart';
 import 'package:control_asistencia/src/pages/asignation/asignation_page.dart';
@@ -18,6 +19,7 @@ Map<String, WidgetBuilder> getApplicationRoutes(){
     'asignation': (BuildContext context)=> AsignationPage(),
     'login': (BuildContext context)=> LoginPage(),
     'asistencia': (BuildContext context)=> AsistenciaPage(),
+    'statistics':(BuildContext context)=> StatisticsPage(),
 
   };
 }

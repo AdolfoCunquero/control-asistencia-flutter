@@ -6,7 +6,8 @@ final _icons = <String, IconData>{
   'user': Icons.account_circle,
   'professor': Icons.verified_user,
   'asignation': Icons.article_sharp,
-  'asistencia': Icons.sports_handball
+  'asistencia': Icons.sports_handball,
+  'statistics': Icons.pie_chart
 };
 
 Icon getIcon(String name){

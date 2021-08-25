@@ -25,23 +25,20 @@
       "ruta" : "asignation",
       "icon" : "asignation",
       "texto": "Asignacion Cursos"
-    },
+    }
+  ],
+  "rutas_catedratico" : [
     {
-      "ruta" : "login",
-      "icon" : "user",
-      "texto": "Login"
-    },
-    {
-      "ruta" : "asistencia",
-      "icon" : "asistencia",
-      "texto": "Asistencia"
+      "ruta" : "statistics",
+      "icon" : "statistics",
+      "texto": "Estadisticas por curso"
     }
   ],
   "rutas_student" : [
     {
-      "ruta" : "course",
-      "icon" : "course",
-      "texto": "Cursos"
+      "ruta" : "asistencia",
+      "icon" : "asistencia",
+      "texto": "Asistencia"
     }
   ]
 }

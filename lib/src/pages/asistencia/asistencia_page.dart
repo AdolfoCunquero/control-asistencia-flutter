@@ -131,7 +131,7 @@ class _AsistenciaPageState extends State<AsistenciaPage> {
                       style: TextStyle(fontSize: 20),
                     ),
                     subtitle: Text(
-                        "${data.carnet} ${data.first_name} ${data.last_name}"
+                        "${data.start_time} A ${data.end_time}"
                     ),
                     onTap: (){
                       confirmAsistencia(context, data.id, data.date);

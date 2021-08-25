@@ -10,17 +10,15 @@ class _MenuProvider {
     final resp = await rootBundle.loadString('data/menu.json');
     Map dataMap = json.decode(resp);
 
-    opciones = dataMap["rutas_admin"];
+    //opciones = dataMap["rutas_admin"];
 
-    /*if (rol ==1){
+    if (rol ==1){
       opciones = dataMap["rutas_admin"];
     }else if(rol == 2){
-      opciones = dataMap["rutas_student"];
+      opciones = dataMap["rutas_catedratico"];
     }else if(rol == 3){
       opciones = dataMap["rutas_student"];
     }
-    */
-
 
     return opciones;
   }

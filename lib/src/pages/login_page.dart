@@ -1,12 +1,14 @@
 import 'dart:io';
 import 'package:control_asistencia/src/models/access_model.dart';
 import 'package:control_asistencia/src/models/user_model.dart';
+import 'package:control_asistencia/src/pages/home_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 import 'package:control_asistencia/src/env/env.dart' as URL_BASE;
 import 'dart:convert';
 import 'package:path_provider/path_provider.dart';
+import 'dart:math';
 
 class LoginPage extends StatefulWidget {
   @override
@@ -67,11 +69,31 @@ class _LoginDemoState extends State<LoginPage> {
           "access_token": "Bearer ${login.access}"
          }
       """);
+
+      print('Loged in!');
+      /*
+      Navigator.of(context).push(
+          new MaterialPageRoute(
+              builder: (BuildContext context){
+                return new HomePage();
+              }
+          )
+      );
+
+      */
+
+
+      //setState(() {
+        Navigator.of(context).pushNamedAndRemoveUntil('/', (Route<dynamic> route) => false);
+      //});
+
     }
-
-    print('Loged in!');
-
     return response;
+  }
+
+  String getKey(){
+    var rng = new Random();
+    return rng.nextInt(1000).toString();
   }
 
   @override

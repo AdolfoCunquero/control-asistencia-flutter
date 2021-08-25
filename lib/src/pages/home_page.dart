@@ -2,8 +2,10 @@ import 'package:control_asistencia/src/providers/current_user.dart';
 import 'package:flutter/material.dart';
 import 'package:control_asistencia/src/providers/menu_provider.dart';
 import 'package:control_asistencia/src/utils/icon_string.dart';
+import 'dart:math';
 
 class HomePage extends StatefulWidget {
+
   @override
   _HomePageState createState() => _HomePageState();
 }
@@ -22,6 +24,14 @@ class _HomePageState extends State<HomePage> {
     var currentUserProvider = await userProvider.cargarData();
     rol = currentUserProvider['rol'];
     print(rol);
+    setState(() {
+      getKey();
+    });
+  }
+
+  String getKey(){
+    var rng = new Random();
+    return rng.nextInt(1000).toString();
   }
 
   @override
@@ -29,6 +39,24 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       appBar: AppBar(
         title: Text("Menu principal"),
+        actions: <Widget>[
+          Container(
+              //margin: EdgeInsets.only(right: 5.0),
+              padding: EdgeInsets.all(8.0),
+              child: RawMaterialButton(
+                onPressed: () {
+                  Navigator.of(context).pushNamedAndRemoveUntil('login', (Route<dynamic> route) => false);
+                },
+                elevation: 2.0,
+                fillColor: Colors.deepPurple,
+                child: Icon(
+                  Icons.logout,
+                  size: 25.0,
+                ),
+                shape: CircleBorder(),
+              )
+          )
+        ],
       ),
       body: _lista(),
     );
@@ -36,6 +64,7 @@ class _HomePageState extends State<HomePage> {
 
   Widget _lista(){
     return FutureBuilder(
+      key: Key(getKey()),
       future: menuProvider.cargarData(rol),
       initialData: [],
       builder: (context, AsyncSnapshot<List<dynamic>> snapshot){
@@ -48,7 +77,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   List<Widget> _crearListaItems( data,BuildContext context){
-    final List<Widget> opciones = [];
+    List<Widget> opciones = [];
     data.forEach((item) {
       final widgetTemp2 = Card(
         child: Container(
@@ -78,3 +107,6 @@ class _HomePageState extends State<HomePage> {
   }
 
 }
+
+
+
