@@ -11,7 +11,7 @@ class App extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title:"Menu principal",
-      initialRoute: '/',
+      initialRoute: 'login',
       routes:getApplicationRoutes(),
       onGenerateRoute: (settings){
         return MaterialPageRoute(

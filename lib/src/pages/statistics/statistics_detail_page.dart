@@ -1,24 +1,22 @@
 import 'package:control_asistencia/src/models/section_model.dart';
-import 'package:control_asistencia/src/models/statistics_model.dart';
+import 'package:control_asistencia/src/models/statistics_detail_model.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:control_asistencia/src/env/env.dart' as URL_BASE;
-import 'package:pie_chart/pie_chart.dart';
 import 'package:control_asistencia/src/providers/current_user.dart';
 import 'package:intl/intl.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 
-class StatisticsPage extends StatefulWidget {
-
+class StatisticsDetailPage extends StatefulWidget {
   @override
-  _StatisticsPageState createState() => _StatisticsPageState();
+  _StatisticsDetailPageState createState() => _StatisticsDetailPageState();
 }
 
-class _StatisticsPageState extends State<StatisticsPage> {
+class _StatisticsDetailPageState extends State<StatisticsDetailPage> {
 
-  Map<String, double> dataMap = new Map();
   var sections;
+  var statistics;
   int? section_id;
   String? fecha;
   String _selectedDate = '';
@@ -47,20 +45,24 @@ class _StatisticsPageState extends State<StatisticsPage> {
   }
 
 
-  Future<List<StatisticsModel>> getStatistics() async {
+  Future<List<StatisticDetailsModel>> getStatistics() async {
+
+    if(section_id == null || _selectedDate == ''){
+      return [];
+    }
 
     var currentUserProvider = await userProvider.cargarData();
     final String accessToken = currentUserProvider["access_token"];
 
-    final response = await http.get(Uri.parse('${URL_BASE.Env.url_base}statistics/por_curso/${section_id}/${_selectedDate}/'),
+    final response = await http.get(Uri.parse('${URL_BASE.Env.url_base}statistics/por_estudiante/${section_id}/${_selectedDate}/'),
         headers: {
           "Authorization": accessToken
         });
     if (response.statusCode == 200) {
 
       final items = json.decode(response.body).cast<Map<String, dynamic>>();
-      List<StatisticsModel> statisticResponse = items.map<StatisticsModel>((json) {
-        return StatisticsModel.fromJson(json);
+      List<StatisticDetailsModel> statisticResponse = items.map<StatisticDetailsModel>((json) {
+        return StatisticDetailsModel.fromJson(json);
       }).toList();
       return statisticResponse;
     } else {
@@ -82,7 +84,11 @@ class _StatisticsPageState extends State<StatisticsPage> {
         final format = new DateFormat('yyyy-MM-dd');
         _selectedDate = args.value.toString();
         _selectedDate = format.format(DateTime.parse(_selectedDate));
-        graficarPie();
+
+        if(section_id != null && _selectedDate != ''){
+          statistics = getStatistics();
+        }
+
       } else if (args.value is List<DateTime>) {
         _dateCount = args.value.length.toString();
       } else {
@@ -91,33 +97,23 @@ class _StatisticsPageState extends State<StatisticsPage> {
     });
   }
 
-  void graficarPie() async{
-    var new_statisitcs = await getStatistics();
-
-    setState(() {
-      new_statisitcs.forEach((element) {
-        dataMap[element.legend] = double.parse(element.conteo.toString());
-        //dataMap["SI asistieron"] = double.parse(element.conteo.toString());
-      });
-    });
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    dataMap.putIfAbsent("SI Asistieron", () => 0);
-    dataMap.putIfAbsent("NO Asistieron", () => 0);
+  Widget asistenciaMarcada(String? date){
+    if (date == null){
+      return Icon(Icons.cancel_outlined, color: Colors.redAccent,);
+    }else{
+      return Icon(Icons.check_circle, color: Colors.green);
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Grafico por curso"),
+        title: Text("Detalle estudiantes"),
       ),
       body: Container(
         child: ListView(
-          padding: EdgeInsets.all(25.0),
+          padding: EdgeInsets.symmetric(horizontal: 25.0, vertical: 5.0),
           children: <Widget>[
             FutureBuilder(
                 future: getSections(),
@@ -141,7 +137,11 @@ class _StatisticsPageState extends State<StatisticsPage> {
                           section_id = int.parse(value.toString());
                           print(section_id);
                           if(section_id != null && _selectedDate != ''){
-                            graficarPie();
+                            //graficarPie();
+                            print('entra');
+                            setState(() {
+                              statistics = getStatistics();
+                            });
                           }
                         });
                       },
@@ -157,15 +157,35 @@ class _StatisticsPageState extends State<StatisticsPage> {
                   DateTime.now().subtract(const Duration(days: 4)),
                   DateTime.now().add(const Duration(days: 3))),
             ),
-            PieChart(
-              dataMap: dataMap,
-              animationDuration: Duration(milliseconds: 800),
-              chartLegendSpacing: 32.0,
-              chartRadius: MediaQuery
-                  .of(context)
-                  .size
-                  .width / 2.7,
+            FutureBuilder<List<StatisticDetailsModel>>(
+              future: statistics,
+              //initialData: [],
+              builder: (BuildContext context, AsyncSnapshot snapshot){
+                if(!snapshot.hasData){
+                  return Center(
+                    child: Text("Seleccione curso y fecha"),
+                  );
+                }
+                return ListView.builder(
+                  shrinkWrap: true,
+                  itemCount: snapshot.data.length,
+                  itemBuilder: (BuildContext context, int index){
+                    var data = snapshot.data[index];
+                    return Card(
+                      child: ListTile(
+                        trailing: asistenciaMarcada(data.date),
+                        leading: Icon(Icons.person),
+                        title: Text(
+                          "${data.carnet} ${data.first_name} ${data.last_name}",
+                          style: TextStyle(fontSize: 20),
+                        ),
+                      ),
+                    );
+                  },
+                );
+              },
             ),
+
           ],
         ),
 

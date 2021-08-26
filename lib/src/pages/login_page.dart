@@ -19,6 +19,7 @@ class _LoginDemoState extends State<LoginPage> {
 
   String _username = "";
   String _password = "";
+  String _mensaje = "";
 
   void obtenerDatos() async {
     final file = await _localFile;
@@ -50,7 +51,7 @@ class _LoginDemoState extends State<LoginPage> {
         "password": _password,
       },
     );
-
+    print(response.statusCode);
     if (response.statusCode == 200){
       AccessModel login = AccessModel.fromJson(jsonDecode(response.body));
 
@@ -71,22 +72,13 @@ class _LoginDemoState extends State<LoginPage> {
       """);
 
       print('Loged in!');
-      /*
-      Navigator.of(context).push(
-          new MaterialPageRoute(
-              builder: (BuildContext context){
-                return new HomePage();
-              }
-          )
-      );
+      Navigator.of(context).pushNamedAndRemoveUntil('/', (Route<dynamic> route) => false);
 
-      */
-
-
-      //setState(() {
-        Navigator.of(context).pushNamedAndRemoveUntil('/', (Route<dynamic> route) => false);
-      //});
-
+    }
+    else{
+      setState(() {
+        _mensaje = "Usuario o password incorrecto";
+      });
     }
     return response;
   }
@@ -107,12 +99,13 @@ class _LoginDemoState extends State<LoginPage> {
         child: Column(
           children: <Widget>[
             Padding(
-              padding: const EdgeInsets.only(top: 60.0, bottom: 30.0),
+              padding: const EdgeInsets.only(top: 50.0, bottom: 30.0),
               child: Center(
                 child: Container(
                     width: 200,
                     height: 150,
-                    child: FlutterLogo()),
+                    child: Image.asset("assets/logo-umg.png")
+                ),
               ),
             ),
             Padding(
@@ -152,6 +145,16 @@ class _LoginDemoState extends State<LoginPage> {
                 child: Text(
                   'Login',
                   style: TextStyle(color: Colors.white, fontSize: 25),
+                ),
+              ),
+            ),
+            Container(
+              padding: EdgeInsets.only(top:25.0),
+              child: Text(
+                _mensaje,
+                style: TextStyle(
+                  fontSize: 20.0,
+                  color: Colors.red
                 ),
               ),
             ),

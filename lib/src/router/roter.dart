@@ -1,5 +1,6 @@
 import 'package:control_asistencia/src/pages/asistencia/asistencia_page.dart';
 import 'package:control_asistencia/src/pages/professor/professor_page.dart';
+import 'package:control_asistencia/src/pages/statistics/statistics_detail_page.dart';
 import 'package:control_asistencia/src/pages/statistics/statistics_page.dart';
 import 'package:flutter/material.dart';
 import 'package:control_asistencia/src/pages/login_page.dart';
@@ -20,6 +21,6 @@ Map<String, WidgetBuilder> getApplicationRoutes(){
     'login': (BuildContext context)=> LoginPage(),
     'asistencia': (BuildContext context)=> AsistenciaPage(),
     'statistics':(BuildContext context)=> StatisticsPage(),
-
+    'statistics_detail' :(BuildContext context)=> StatisticsDetailPage(),
   };
 }

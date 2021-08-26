@@ -32,6 +32,11 @@
       "ruta" : "statistics",
       "icon" : "statistics",
       "texto": "Estadisticas por curso"
+    },
+    {
+      "ruta" : "statistics_detail",
+      "icon" : "statistics_detail",
+      "texto": "Detalle asistencias por curso"
     }
   ],
   "rutas_student" : [
